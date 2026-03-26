@@ -1,0 +1,241 @@
+🧵 PART 1 — What does an OS thread actually do?
+
+An OS thread is created and managed by the Operating System (Windows/Linux).
+
+It is responsible for:
+
+-Executing instructions
+-Maintaining its own stack memory
+-Context switching
+-CPU scheduling
+
+Think of OS thread as:
+
+A worker provided by the operating system.
+
+Each OS thread has:
+
+(i)   Dedicated stack memory (usually ~1MB default)
+(ii)  Kernel resources
+(iii) Managed scheduling by OS
+
+
+🟠 Old Java Model (Platform Threads)
+
+1 Java Thread = 1 OS Thread
+
+If you create:
+
+new Thread(...).start();
+
+JVM asks OS:
+
+“Give me one real thread.”
+
+OS creates:
+
+-Thread control block
+-Stack memory
+-Scheduling slot
+
+So every Java thread:
+
+Consumes OS memory
+Consumes kernel resources
+
+
+🧵 PART 2 — What does a Virtual Thread do?
+
+A virtual thread is managed by the JVM itself.
+
+Instead of:
+
+1 Java thread = 1 OS thread
+
+We now have:
+
+Many virtual threads → Few OS threads
+
+
+What happens internally?
+
+When virtual thread runs:
+
+-It is mounted on an OS thread
+-It executes normally
+
+When it blocks (like I/O):
+
+a.JVM saves its stack into heap
+b.Detaches it from OS thread
+c.OS thread is freed for other tasks
+
+Later:
+
+a.Virtual thread resumes
+b.Gets mounted again
+
+Why is this better?
+
+Because OS threads are:
+
+-Heavy
+-Limited
+-Expensive to create
+
+Virtual threads are:
+
+-Lightweight
+-Heap-based stack
+-JVM scheduled
+
+So instead of 10,000 OS threads,
+you might have:
+
+10 OS threads
+100,000 virtual threads
+
+Huge memory savings.
+
+🧠 Now your smart question:
+
+“If OS has less memory, why move stack to heap? Isn't heap also memory?”
+
+Yes — heap is also memory.
+
+But here is the difference:
+
+(i)OS Thread Stack Memory
+(ii)Allocated in native memory
+(iii)Fixed size (like 1MB per thread)
+(iv)Reserved upfront
+(v)Not dynamically shrinkable
+(vi)Outside JVM GC control
+
+If you create 10,000 threads:
+
+10,000 × 1MB = 10GB memory reserved
+
+Even if threads are idle.
+
+-Virtual Thread Stack
+-Stored in heap
+-Grows dynamically
+-Can shrink
+-Managed by GC
+-Only uses memory when needed
+
+If 10,000 virtual threads are waiting:
+
+-Only small stack snapshots stored
+-Not full 1MB each
+
+So:
+
+OS stack = fixed, heavy
+Virtual stack = dynamic, flexible
+
+That’s why it’s better.
+
+🧠 Now second smart question:
+
+“If OS memory was a problem, why was PermGen moved to Metaspace?”
+
+Excellent connection 👏
+
+Let’s clarify that separately.
+
+🔴 What Was PermGen?
+
+In Java 8 and earlier:
+
+PermGen was:
+
+(i)Part of heap
+(ii)Fixed size
+
+Stored:
+
+a.Class metadata
+b.Method metadata
+c.Static fields
+
+Problem:
+
+-Fixed size
+-If too many classes loaded → OutOfMemoryError
+-Hard to tune
+
+
+🟢 Why Metaspace Was Introduced
+
+In Java 8:
+
+PermGen was removed.
+
+Replaced with:
+
+Metaspace.
+
+Key difference:
+
+-Uses native memory
+-Not part of heap
+-Can grow dynamically
+
+Why move it outside heap?
+
+Because:
+
+-Class metadata size is unpredictable
+-It should not compete with object heap
+
+Dynamic class loading (frameworks, proxies, Spring, Hibernate) caused frequent OOM
+in PermGen
+
+
+🧠 Important Distinction
+
+-Virtual thread stack moved to heap
+-PermGen moved to native memory
+
+These changes were solving different problems.
+
+Why are they different?
+
+
+Virtual Threads:
+
+Goal → Reduce OS thread overhead
+Solution → Use heap-managed stack
+
+PermGen:
+
+Goal → Avoid fixed-size metadata region
+Solution → Use dynamic native memory
+
+They solve separate issues.
+
+🧠 Big Picture Summary
+Feature	            Old	                New	                      Why
+
+Java Threads	    OS threads	        Virtual threads	          Reduce OS overhead
+Thread stack	    Native memory	    Heap	                  Dynamic, scalable
+PermGen	            Fixed heap area	    Metaspace (native)	      Avoid OOM, flexible
+
+
+🎯 Final Clean Understanding
+
+-OS thread = heavy worker from OS
+-Virtual thread = lightweight worker managed by JVM
+-Virtual stack in heap is flexible and GC-managed
+-PermGen moved to Metaspace to avoid fixed memory limit problems
+
+These are separate architectural decisions
+
+If you want, next we can go deeper into:
+
+🔥 How virtual thread stack is actually stored in heap
+🧠 How GC scans virtual thread stacks
+⚔️ Why heap vs native memory tradeoffs matter
+📦 Full memory map of modern JVM
