@@ -1,0 +1,120 @@
+What is AOT Compiler?
+
+🧠 First: How Normal Java Runs (Very Simple)
+
+When you write:
+
+System.out.println("Hello");
+
+Step 1 — Compile
+
+javac turns it into bytecode (.class file).
+
+Bytecode is:
+
+(i)Not real machine code
+(ii) Not directly understood by CPU
+(iii) Meant for the JVM
+
+
+Step 2 — When Program Starts
+
+Normally Java does this:
+
+a.JVM starts
+b.Reads bytecode
+c.Runs it slowly using interpreter
+d.If some code runs again and again,
+e.JVM compiles that part into fast machine code (JIT)
+
+So normal flow is:
+
+Java → Bytecode → JVM → JIT → Machine Code → CPU
+
+
+🔵 Now What Is AOT?
+
+AOT means:
+
+Compile to machine code BEFORE running the program.
+
+So instead of waiting for JVM to convert it at runtime…
+
+It is converted earlier.
+
+New flow:
+
+Java → Bytecode → Native Machine Code (before running)
+
+When you run the program:
+
+a.It already contains machine code
+b.No JIT needed
+c.No interpretation
+d.Starts immediately
+
+
+🍽️ Simple Analogy
+
+Normal Java (JIT):
+
+You cook food after the customer orders.
+First order is slow. Later it becomes fast.
+
+AOT:
+
+You cook everything before restaurant opens.
+Customers get food instantly.
+
+🧠 Why AOT Was Needed?
+
+Because modern apps like:
+
+Microservices
+Serverless
+Cloud functions
+
+Start and stop quickly.
+
+If JVM takes time to:
+
+Start
+Interpret
+JIT compile
+
+It wastes time.
+
+So AOT solves:
+
+Slow startup
+JIT CPU overhead
+🟢 What Happens Internally in AOT?
+
+During build time:
+
+a.All classes are analyzed
+b.Methods are compiled to machine code
+c.Dependencies are included
+d.A native executable file is created
+
+So when you run it:
+
+-It runs directly on CPU
+-Like a C or C++ program
+-JVM is not needed (in native image case)
+
+
+⚖️ JIT vs AOT (Super Simple)
+
+JIT	                                                  AOT
+
+Compiles during runtime	                              Compiles before runtime
+Slower startup	                                      Faster startup
+Better long-term optimization	                      Slightly less smart optimization
+Needs JVM running	                                  Can run without JVM
+
+
+🧠 One-Line Meaning
+
+AOT means your Java program is converted into real machine code before execution,
+so it starts faster and doesn’t need runtime compilation.
