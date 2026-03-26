@@ -1,0 +1,77 @@
+Do We Still Have Eden & Old Generation in Recent GC?
+
+This is a VERY GOOD question.
+
+Answer:
+👉 It depends on which collector you use.
+
+🟠 Traditional Generational Model (Java 8, 17 default)
+
+Heap structure:
+
+Young Generation
+   - Eden
+   - Survivor 0
+   - Survivor 1
+
+Old Generation
+
+Yes:
+
+Eden exists
+Objects age
+
+Promotion to Old Gen
+🔵 Modern Low-Latency Collector (Original ZGC)
+
+Originally:
+❌ No traditional Eden / Old structure
+Heap divided into regions only
+
+Why?
+Because it focused on:
+
+Concurrent relocation
+Low pause times
+Simpler layout
+
+Everything was treated more uniformly.
+
+🟢 But Now (Java 21+ → Generational ZGC)
+
+They reintroduced generational logic.
+
+Because JVM engineers realized:
+
+“Most objects still die young.”
+
+So now:
+
+Yes ✅
+
+There is a Young area concept
+There is an Old area concept
+But implemented differently using regions
+
+Not fixed blocks like old days.
+
+Instead:
+
+(i)Regions dynamically act as young or old
+(ii)Still concurrent
+(iii)Still low pause
+
+
+🧠 So Final Answer
+In modern JVM (Java 25):
+
+If using generational collector:
+✔️ Young generation exists
+✔️ Old generation exists
+✔️ Concept of object aging exists
+
+BUT:
+
+Not rigid memory partitions
+Region-based
+Fully concurrent relocation
