@@ -1,0 +1,18 @@
+What is Project Loom ?
+
+Project Loom is an OpenJDK project that introduced virtual threads (finalized in Java 21)
+and continues to be enhanced in Java 25.
+
+
+🔷 Simple way to remember
+Project Loom = umbrella project
+Virtual Threads = main feature
+Java 25 = improved version, not the origin
+
+🔷 Quick analogy
+Think of it like:
+Project Loom = Electric car technology
+Virtual Threads = Battery system
+Java 21 = First working car
+Java 25 = Better, faster upgraded model
+

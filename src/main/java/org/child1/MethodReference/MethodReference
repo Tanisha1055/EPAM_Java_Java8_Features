@@ -1,0 +1,97 @@
+What is Method Reference ?
+
+Method references in Java are a feature introduced in Java 8 that allow you to refer to
+methods directly by their names using the :: operator. They are a shorthand for lambda
+expressions that call a specific method, making your code more readable and concise.
+
+Why Use Method References?
+
+(i) Improved readability: Code is easier to understand.
+(ii) Less boilerplate: You reuse existing methods instead of writing new lambdas.
+(iii) Functional programming style: Works well with streams and collections.
+(iv) Fewer errors: Reduces logical and typo mistakes.
+
+
+Types of Method References
+
+There are four main types:
+
+1. Reference to a Static Method
+
+You can refer to a static method using the class name.
+
+Syntax:
+
+ClassName::staticMethodName
+
+Example:
+
+names.forEach(System.out::println);
+
+Here, System.out::println is a method reference to the static method println of
+System.out.
+
+2. Reference to an Instance Method of a Particular Object
+
+You can refer to an instance method of a specific object.
+
+Syntax:
+
+objectName::instanceMethodName
+
+Example:
+
+Number_Comparator comparator = new Number_Comparator();
+numbers.stream().sorted(comparator::compare).toList();
+
+Here, comparator::compare refers to the compare method of the comparator object.
+
+3. Reference to an Instance Method of an Arbitrary Object of a Particular Type
+
+You can refer to an instance method of any object of a particular type.
+
+Syntax:
+
+ClassName::instanceMethodName
+
+Example:
+
+numbers.stream().sorted(Integer::compareTo).toList();
+
+Here, Integer::compareTo refers to the compareTo method of any Integer object.
+
+4. Reference to a Constructor
+
+You can refer to a constructor using the new keyword.
+
+Syntax:
+
+ClassName::new
+
+Example:
+
+studentNames.stream().map(Student::new).toArray(Student[]::new);
+
+Here, Student::new creates a new Student object for each name.
+
+
+Summary Table
+
+Type	                                    Syntax	                    Example
+
+Static method	                            ClassName::methodName	    Math::abs
+Instance method of a particular object	    object::methodName	        myList::size
+Instance method of arbitrary object type	ClassName::methodName	  String::toLowerCase
+Constructor	                                ClassName::new	            ArrayList::new
+
+
+When to Use Method References?
+
+When you have a lambda expression that only calls a method.
+When working with streams and collections for operations like sorting, mapping, or
+printing.
+
+
+What is the advantage of method reference?
+
+You don't have to create obj of that class , you can directly refer to that method .

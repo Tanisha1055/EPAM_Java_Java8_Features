@@ -1,0 +1,82 @@
+What Are Sealed Classes and Interfaces?
+
+Sealed classes and interfaces let you control which other classes or interfaces can
+extend or implement them.
+
+This means you can say, “Only these specific classes are allowed to be subtypes of this
+class/interface.”
+
+Why Use Them?
+Sometimes, you want to limit how your code can be extended. For example, if you make a
+Shape class, you might only want Circle, Square, and Rectangle to be shapes—not any
+random class someone else writes.
+
+
+How Do You Declare a Sealed Class?
+
+Add the sealed keyword to your class.
+List the allowed subclasses with the permits keyword.
+
+Example:
+
+public sealed class Shape permits Circle, Square, Rectangle { }
+
+Only Circle, Square, and Rectangle can extend Shape.
+
+
+What About the Subclasses?
+
+Each subclass must say how it continues the sealing:
+final — No one can extend it further.
+sealed — It can be extended, but only by specific classes.
+non-sealed — Anyone can extend it.
+
+Example:
+
+public final class Circle extends Shape { }        // Can't be extended
+public sealed class Rectangle extends Shape permits FilledRectangle { }
+public non-sealed class Square extends Shape { }   // Can be extended by anyone
+
+
+Where Do the Subclasses Have to Be?
+
+They must be in the same package or same module as the sealed class.
+
+
+Sealed Interfaces
+
+Works the same way as sealed classes, but for interfaces.
+You can control which classes or interfaces can implement or extend your interface.
+
+
+Using Records
+
+You can use Java’s record classes as permitted subclasses.
+Records are always final (can’t be extended).
+
+
+Why Does This Matter for Type Safety?
+
+The compiler can check your code more strictly.
+For example, it can prevent you from casting between types that can never be related,
+making your code safer.
+
+
+New API Methods:
+
+isSealed() — Tells you if a class/interface is sealed.
+permittedSubclasses() — Lists the classes that are allowed to extend/implement a sealed
+class/interface.
+
+In summary:
+Sealed classes and interfaces let you tightly control your class hierarchies, making
+your code safer and easier to understand. You decide exactly which classes can extend
+or implement your base types, and Java enforces these rules for you.
+
+
+Disadvantage of Sealed Classes:
+
+You can't use it as a library for any project , as you can't add backward compatibility
+as what is predefined in the permits of sealed nly that will be allowed , and even if
+you added that later in the permit you would have to add for all the rest of the class
+extending that the permit statements .
