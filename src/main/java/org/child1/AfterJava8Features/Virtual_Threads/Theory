@@ -86,3 +86,158 @@ Since virtual thread stacks are stored in heap:
 -More scalable
 -Better memory usage
 -Less pressure compared to thousands of OS stacks
+
+
+
+🧵 PART 1: Virtual Threads (Explained Like You’ve Never Seen Threads Before)
+
+Step 1: What is a Thread?
+
+A thread is simply:
+-A path of execution inside your program.
+
+When your program runs:
+
+a.Main thread starts
+b.It executes instructions line by line
+
+If you create another thread:
+
+new Thread(() -> doWork()).start();
+
+You now have:
+
+-Main thread
+-One extra thread
+
+Both run independently.
+
+🟠 Old Model (Platform Threads)
+
+Before Java 21:
+
+1 Java Thread = 1 OS Thread
+
+What is OS Thread?
+
+It is created and managed by:
+
+Windows / Linux / Mac OS
+
+It has:
+
+a.Its own stack memory (~1MB default)
+b.Its own scheduling by OS
+c.Heavy system-level resources
+d.Problem with OS Threads
+
+Imagine:
+
+-10,000 users hitting your web server
+-Each request handled by 1 thread
+
+That means:
+
+10,000 OS threads
+
+Problems:
+
+(i)   Huge memory usage
+(ii)  Context switching cost
+(iii) System slowdown
+(iv)  Hard limit (few thousands max)
+
+This is why people used:
+
+-Thread pools
+-Async programming
+-Complex reactive frameworks
+
+
+🔵 Now: Virtual Threads (Java 21+)
+
+Virtual Threads are:
+
+Lightweight threads managed by the JVM, not the OS.
+
+Now the mapping is:
+
+100,000 Virtual Threads
+        ↓
+Scheduled on maybe 8–16 OS threads
+
+
+How is this possible?
+
+Let’s break it simply.
+
+🔹 Important Idea: Most threads WAIT most of the time
+
+Example:
+
+String data = databaseCall();
+
+While waiting for database:
+
+-The thread is doing NOTHING.
+-Just sitting idle.
+
+Old model:
+
+OS thread is blocked.
+Wasting memory and resources.
+🔹 What Virtual Threads Do Differently
+
+When a virtual thread blocks (like DB call):
+
+Instead of:
+
+Blocking OS thread
+
+It does:
+
+(i)   Save its stack state into heap
+(ii)  Free the OS thread
+(iii) Let OS thread do other work
+(Like Context switching in OS)
+
+Later when DB responds:
+
+-JVM resumes the virtual thread
+-Mounts it again on an OS thread
+
+🧠 Key Concept: Mount / Unmount
+
+Mounted → Virtual thread is attached to OS thread
+Unmounted → Saved state, waiting
+
+This is why they scale massively.
+
+🔥 Why They Are Lightweight
+
+Platform thread:
+
+-Stack in OS memory
+-Fixed size (~1MB)
+
+Virtual thread:
+
+(i)  Stack stored in heap
+(ii) Grows dynamically
+(iii) Much smaller
+
+You can create:
+
+Millions of virtual threads
+
+Without crashing system.
+
+🧠 Why This Matters for GC
+
+Virtual thread stacks are:
+
+a.Stored in heap
+b.Managed by GC
+c.Cleaned automatically
+
+So memory is more efficient.
