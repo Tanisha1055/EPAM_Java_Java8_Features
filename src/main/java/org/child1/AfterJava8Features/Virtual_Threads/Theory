@@ -1,0 +1,88 @@
+🧵 1️⃣ What Is a Virtual Thread?
+
+First understand the old model
+
+🟠 Before (Java 8, 11, 17)
+
+If you create:
+
+new Thread(() -> doWork()).start();
+
+That thread is:
+
+👉 Mapped 1-to-1 with an OS thread
+
+Meaning:
+
+1 Java thread = 1 Operating System thread
+
+Problems:
+
+-OS threads are heavy
+-Limited (few thousands max)
+-Large stack memory (1MB per thread default)
+-Context switching is expensive
+
+So if you create 100,000 threads → 💥 system crash or huge memory usage.
+
+🔵 Now: Virtual Threads (Java 21+, available in Java 25)
+
+Virtual Threads come from Project Loom.
+
+Now:
+
+Many Java threads  →  Few OS threads
+
+Instead of:
+
+1 Java thread = 1 OS thread
+
+We have:
+
+100,000 virtual threads
+       ↓
+Scheduled on maybe 8–16 real OS threads
+
+
+🧠 What does that mean?
+
+Virtual threads are:
+
+a.Very lightweight
+b.Created in huge numbers
+c.Managed by the JVM, not the OS
+d.Parked and resumed efficiently
+
+
+📦 How are they different internally?
+
+Platform Thread (old):
+
+(i)    Has its own OS stack
+(ii)   Heavy
+(iii)  OS does scheduling
+(iv)   Virtual Thread
+(v)    Stack stored in heap
+(vi)   JVM scheduler manages it
+(vii)  When blocked (like I/O), it is unmounted
+(viii) OS thread is freed for other work
+
+
+🧠 Simple Analogy
+
+Old model:
+
+Each customer gets a dedicated waiter.
+
+Virtual thread model:
+
+Few waiters serve many customers efficiently.
+
+🎯 Why This Matters for GC
+
+Since virtual thread stacks are stored in heap:
+
+-They are visible to GC
+-More scalable
+-Better memory usage
+-Less pressure compared to thousands of OS stacks
