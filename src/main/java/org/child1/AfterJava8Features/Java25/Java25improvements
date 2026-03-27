@@ -63,3 +63,315 @@ Java 25 → “Let’s perfect everything for real-world use”
 -Java 25 builds on this by optimizing performance, improving stability, and making these
 features production-ready.
 
+
+1️⃣ Better Scheduling (Smarter Thread Management)
+
+❌ Earlier (Java 21 initial behavior)
+
+JVM used a basic scheduler
+
+Not always optimal in:
+-High load
+-Mixed workloads (CPU + I/O)
+
+✅ In Java 25 (Improved)
+
+👉 JVM scheduler is smarter in:
+
+✔ Work-stealing improvements
+Threads are distributed across CPU cores better
+Idle cores can “steal” work from busy ones
+
+✔ Fairness
+Prevents some threads from starving (waiting too long)
+
+✔ CPU utilization
+Keeps CPU busy without overload
+
+
+🧠 Simple analogy:
+
+Old → One worker overloaded, others idle
+New → Work distributed evenly across workers
+
+2️⃣ Less Overhead (More Lightweight Execution)
+
+❌ Earlier
+
+Virtual threads were already lightweight, BUT:
+(i)  Context switching had some cost
+(ii) Mount/unmount operations could be improved
+
+✅ In Java 25
+
+✔ Faster mount/unmount
+
+When a virtual thread:
+starts running → mounted
+pauses → unmounted
+
+👉 Now this process is faster
+
+✔ Reduced memory footprint
+(i)Stack grows/shrinks more efficiently
+(ii)Better memory reuse
+
+✔ Less GC pressure
+Fewer temporary objects created
+
+🧠 Result:
+
+👉 More threads → less memory → better performance
+
+3️⃣ Handles Blocking More Efficiently (🔥 Most Important)
+
+This is the core reason Loom exists
+
+❌ Problem (Traditional Threads)
+
+Thread.sleep(1000);
+
+👉 OS thread is blocked → wasted resource ❌
+
+✅ Virtual Threads (Improved in Java 25)
+
+✔ Smart Blocking Detection
+
+When a virtual thread:
+
+Calls DB / API / sleep
+
+👉 JVM does:
+
+(i)   Pauses the virtual thread
+(ii)  Releases the OS thread
+(iii) Runs another task
+
+✔ Better Unmounting Logic
+-Faster detection of blocking calls
+-Less delay in freeing OS threads
+
+✔ Improved handling of synchronized blocks
+
+Earlier issue:
+
+synchronized could block carrier thread ❌
+
+Now:
+
+JVM handles it more efficiently (reduced pinning)
+
+🧠 Simple analogy:
+
+Old:
+
+Person waits in line holding a chair → nobody else can sit
+
+New:
+
+Person leaves chair while waiting → others can use it
+🔷 Important Term: “Pinning” (Interview Gold 🔥)
+
+👉 Pinning = when a virtual thread cannot release the OS thread
+
+Happens in:
+-synchronized blocks
+-Native calls
+
+
+Java 25 improvement:
+
+-Reduced pinning scenarios
+-Better detection + handling
+
+
+🔷 Putting It All Together
+
+Before (basic Loom stage):
+
+(i)Good idea
+(ii)Some inefficiencies
+
+Java 25:
+
+(i)Smarter scheduling
+(ii)Faster switching
+(iii)Better blocking handling
+
+👉 Result:
+More scalable + more predictable performance
+
+🔷 Real-world Example
+
+Imagine a web server:
+
+-10,000 users hitting API
+-Each request waits for DB
+
+❌ Old threads:
+
+10,000 OS threads → crash or slow
+
+✅ Virtual threads (Java 25):
+
+(i)Only ~100 OS threads used
+(ii)Others paused efficiently
+
+👉 System stays fast
+
+
+🔷 First: How memory worked in normal (platform) threads
+
+👉 Every platform thread (OS thread) has:
+
+-A fixed stack size (usually ~1 MB)
+-Allocated upfront
+
+❌ Problem:
+
+Even if your method uses very little memory:
+
+void simple() {
+    int x = 10;
+}
+
+👉 Still gets ~1 MB stack reserved 😐
+
+👉 If you create 10,000 threads:
+
+💥 ~10 GB memory needed → not scalable
+
+
+🔷 Now: How Virtual Threads handle memory
+
+Virtual threads do NOT use a fixed OS stack
+
+Instead, they use:
+
+👉 Stack stored in heap (as small chunks)
+
+🔷 1️⃣ Stack grows/shrinks dynamically
+
+✅ How it works:
+
+a.Virtual thread stack is not allocated fully
+b.It starts very small
+c.Grows only when needed
+
+🧠 Example:
+void a() { b(); }
+void b() { c(); }
+void c() { }
+
+👉 Stack frames created only for:
+
+a → b → c
+
+👉 If deeper calls → stack grows
+👉 If methods return → stack shrinks
+
+🔥 Key difference:
+
+(i)Thread Type	Stack
+(ii)Platform thread	Fixed (1 MB)
+(iii)Virtual thread	Dynamic (few KB → grows)
+
+
+🔷 2️⃣ Stack is stored in Heap (not OS memory)
+
+👉 Virtual thread stack is broken into small segments (stack chunks)
+
+(i)  Stored in JVM heap
+(ii) Managed like normal objects
+
+
+✅ Why this helps:
+
+JVM can:
+
+(i)Allocate small memory pieces
+(ii)Free unused parts quickly
+(iii)Reuse memory
+
+🧠 Analogy:
+
+Platform thread:
+
+Book 1000-page notebook even if you write 2 pages
+
+Virtual thread:
+
+Use small notebooks, add pages only when needed
+
+🔷 3️⃣ Stack is released when thread is paused (VERY IMPORTANT)
+
+When virtual thread hits blocking call:
+
+Thread.sleep(1000);
+
+👉 JVM does:
+
+(i)Saves stack into heap
+(ii)Releases OS thread
+(iii)Stack memory can be optimized/reused
+
+✅ Improvement in Java 25:
+
+(i)Faster serialization/deserialization of stack
+(ii)Less memory retained during pause
+(iii)Better reuse of freed stack chunks
+
+
+🔷 4️⃣ Better Memory Reuse
+
+👉 JVM maintains pool of stack chunks
+
+Instead of:
+
+Creating new memory every time ❌
+
+It:
+
+Reuses old chunks ✅
+🧠 Example:
+
+Thread 1 finishes → memory freed
+Thread 2 starts → uses same memory
+
+👉 Less allocation → less GC → better performance
+
+🔷 5️⃣ Less GC Pressure
+
+Earlier:
+
+Many temporary objects → more garbage collection
+
+Now:
+
+(i)Reused stack chunks
+(ii)Fewer allocations
+
+👉 GC runs less frequently
+
+🔷 Putting It All Together
+
+
+Platform Threads:
+(i)   Fixed stack
+(ii)  Wasted memory
+(iii) Poor scalability
+(iv)  Virtual Threads (Java 25 optimized):
+
+✔ Stack grows only when needed
+✔ Stored in heap (flexible)
+✔ Released when paused
+✔ Memory reused efficiently
+✔ Less garbage collection
+
+🔷 Real-world Impact
+
+👉 You can now run:
+
+-1,000,000 virtual threads
+-Using memory similar to:
+~few thousand platform threads
