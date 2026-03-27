@@ -1,0 +1,67 @@
+Q. What is Optional in Java?
+
+-Optional is a special class in Java (introduced in Java 8) that represents a value that might be present or
+absent.
+-Instead of using null to indicate “no value,” you use an Optional object.
+
+Q.Why Use Optional?
+
+a.Helps avoid NullPointerException (errors when you use a variable that’s null).
+b.Makes your code clearer: it’s obvious when a value might be missing.
+
+How to Use Optional in Java
+
+1. Creating an Optional
+
+a.With a value:
+
+Ex:
+Optional<String> name = Optional.of("Alice");
+
+b. Without a value (empty):
+
+Ex:
+Optional<String> name = Optional.empty();
+
+c.Maybe a value (could be null):
+
+Ex:
+Optional<String> name = Optional.ofNullable(possibleName);
+
+2. Checking if a Value is Present
+
+Ex:
+if (name.isPresent()) {
+    System.out.println("Name: " + name.get());
+} else {
+    System.out.println("No name provided");
+}
+
+3. Using a Default Value
+
+String displayName = name.orElse("Guest");
+System.out.println(displayName); // Prints "Alice" or "Guest"
+
+4. Using Lambda Expressions
+
+name.ifPresent(n -> System.out.println("Hello, " + n));
+
+Only prints if there’s a value.
+
+5. Chaining with map and flatMap
+
+Optional<String> upperName = name.map(n -> n.toUpperCase());
+
+Transforms the value if present.
+
+
+Q. Why Not Just Use null?
+
+(i)  Optional makes it clear that a value might be missing.
+(ii) Forces you to handle the missing case, reducing bugs.
+
+Summary:
+
+(i)   Optional is a container for a value that might be present or absent.
+(ii)  Use it to avoid null and make your code safer.
+(iii) Always check or handle the case where the value is missing.
