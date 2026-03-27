@@ -1,0 +1,177 @@
+Q. What Is a Record?
+
+A record is a special kind of Java class introduced in Java 16 (after preview in Java 14/15) to represent
+immutable data objects. Records are designed to reduce boilerplate code for classes whose main purpose is
+to store data—like DTOs (Data Transfer Objects), value objects, or simple POJOs (Plain Old Java Objects)[1] [2].
+
+Key Features:
+
+1. Concise Syntax
+Records use a compact syntax:
+
+public record Person(String name, int age) {}
+
+This single line creates:
+
+(i)   Private, final fields for each component (name, age)
+(ii)  A public constructor (Person(String name, int age))
+(iii) Accessor methods (name(), age())
+(iv)  equals(), hashCode(), and toString() methods
+
+
+2. Immutability:
+All fields in a record are final and private. Once a record object is created, its data cannot be changed.
+
+3. Auto-generated Methods:
+The compiler automatically generates:
+
+-Accessor methods for each component (named after the component, not getX())
+-equals() and hashCode() based on all components
+-toString() that prints the record’s name and all components
+
+4. Restrictions:
+
+(i)   Records are implicitly final (cannot be extended)
+(ii)  Records cannot have additional instance fields (only static fields/methods allowed)
+(iii) Records extend java.lang.Record (cannot extend other classes)
+(iv)  Records can implement interfaces
+(v)   No-arg constructor is not allowed; only the canonical constructor (with all components) is generated
+
+
+Customization:
+
+1.Compact Constructor (Validation):
+
+You can add validation logic in a compact constructor:
+
+public record Range(int start, int end) {
+    public Range {
+        if (start > end) {
+            throw new IllegalArgumentException("Start cannot be greater than end");
+        }
+    }
+}
+
+2. Custom Canonical Constructor:
+
+You can override the canonical constructor to modify or validate input:
+
+public record Person(String name, int age) {
+    public Person(String name, int age) {
+        this.name = name.trim();
+        this.age = age;
+    }
+}
+
+3. Additional Constructors and Methods:
+
+You can add extra constructors (must delegate to the canonical one), static fields, and methods:
+
+public record Person(String name, int age) {
+    public static final String UNKNOWN = "Unknown";
+
+    public Person(String name) {
+        this(name, 0);
+    }
+
+    public String nameInUpperCase() {
+        return name.toUpperCase();
+    }
+
+    public static Person createUnknown(int age) {
+        return new Person(UNKNOWN, age);
+    }
+}
+
+
+Advanced Features:
+
+a. Implementing Interfaces
+
+Records can implement interfaces:
+
+public interface Shape { double area(); }
+
+public record Circle(double radius) implements Shape {
+    @Override
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+}
+
+b.Generic Records
+
+Records can be generic:
+
+public record Pair<T, U>(T first, U second) {}
+
+c.Static Members
+
+You can add static fields and methods:
+
+public record Transaction(String id, double amount) {
+    private static final String PREFIX = "TXN-";
+    public static Transaction create(double amount) {
+        return new Transaction(PREFIX + System.currentTimeMillis(), amount);
+    }
+}
+
+Serialization:
+
+Records that implement Serializable use the canonical constructor during deserialization,
+ensuring immutability and validation logic are preserved. Custom readObject/writeObject methods are
+ignored for records[1].
+
+More detailed description:
+
+Q. What are records ?
+
+Java Records are a special kind of class introduced in Java 16 (after preview in Java 14/15) to model
+immutable data objects in a concise way. They are ideal for data carriers like DTOs (Data Transfer Objects)
+and value objects.
+
+Q. Why Records?
+Before records, you had to write a lot of boilerplate code for simple data classes:
+
+(i)   Private final fields
+(ii)  Constructor
+(iii) Getters
+(iv)  equals(), hashCode(), toString()
+
+Records generate all of these automatically, making your code cleaner and less error-prone[1] [2].
+
+2. Syntax and Auto-Generated Members
+
+Basic Syntax:
+
+public record Person(String name, int age) {}
+
+This single line generates:
+
+-Private final fields: name, age
+-Public constructor: Person(String name, int age)
+-Accessor methods: name(), age() (not getName()/getAge())
+-equals(), hashCode(), toString() methods
+
+Example
+
+Person p = new Person("Alice", 30);
+System.out.println(p.name()); // Alice
+System.out.println(p); // Person[name=Alice, age=30]
+
+3. Key Characteristics and Restrictions"
+
+(i)  Immutability: All fields are final and private.
+(ii) Implicitly final: Records cannot be extended (no inheritance).
+(iii)Extends java.lang.Record: All records extend this abstract class.
+(iv) No additional instance fields: You cannot add new instance variables in the body.
+(v)  Can implement interfaces: Records can implement one or more interfaces.
+(vi) No-arg constructor not allowed: Only the canonical constructor (with all fields) is generated[1] [2].
+
+
+Basic definition:
+
+Record basically helps you to create immutable class , with less boilerplate code . With just one line ,
+all the basic syntax of fields , constructor , getter and setter are added to your code , implicitly .
+From the arguments you pass in the record , they become the field of the respective immutable class .
+(Don't use the keyword class, while writing the record) .
