@@ -241,3 +241,101 @@ b.Managed by GC
 c.Cleaned automatically
 
 So memory is more efficient.
+
+
+Q. Does OS threads and Virtual threads so the same work?
+
+👉 Yes, both do the same work (execute code), but HOW they do it is completely different.
+
+🧠 What is the “work” of a thread?
+
+Both OS thread and virtual thread do:
+
+-Execute your code
+-Run methods
+-Perform tasks (API call, DB call, etc.)
+
+So functionally → same goal ✅
+
+⚠️ But the IMPORTANT difference is in HOW they work
+
+This is where the real concept lies.
+
+🟠 OS Thread (Platform Thread)
+
+How it works:
+
+(i)   Created and managed by OS
+(ii)  Has its own dedicated stack (fixed memory)
+(iii) Scheduled by OS
+(iv)  Heavy resource usage
+
+Behavior:
+
+If it blocks (like DB call):
+
+Thread waits → OS thread is blocked ❌
+
+Nothing else can use that thread.
+
+🔵 Virtual Thread
+
+How it works:
+
+a.Created and managed by JVM
+b.Uses heap-based stack (dynamic)
+c.Scheduled by JVM
+d.Uses a small number of OS threads underneath
+
+Behavior:
+
+If it blocks:
+
+Virtual thread pauses
+↓
+JVM saves its state
+↓
+Frees OS thread
+↓
+OS thread does other work ✅
+
+
+🧠 Core Difference (MOST IMPORTANT)
+
+Feature	                            OS Thread	                               Virtual Thread
+
+Managed by	                        OS	                                       JVM
+Memory	                            Fixed, large	                           Small, dynamic
+Blocking	                        Blocks OS thread	                       Does NOT block OS thread
+Scalability	                        Limited	                                   Massive
+Scheduling	                        OS	                                       JVM
+
+🔥 The REAL Difference in One Line
+
+👉 OS thread = dedicated worker
+👉 Virtual thread = task that borrows a worker only when needed
+
+🧠 Best Analogy
+OS Threads:
+
+One worker per customer → inefficient when customers wait
+
+Virtual Threads:
+
+Few workers serving many customers → efficient
+
+🎯 Interview-Perfect Sentence
+
+“Both OS threads and virtual threads execute code, but OS threads are heavy and managed by the operating
+system, whereas virtual threads are lightweight, JVM-managed, and can release underlying OS threads when
+blocked, enabling much higher scalability.”
+
+❗ Important Correction to Your Statement
+
+You said:
+
+“work is same, functionality is different”
+
+Better version:
+
+“Work is same, but implementation and resource management are fundamentally different.”
