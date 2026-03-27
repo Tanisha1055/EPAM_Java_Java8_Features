@@ -16,3 +16,147 @@ Virtual Threads = Battery system
 Java 21 = First working car
 Java 25 = Better, faster upgraded model
 
+🔷 So what is Project Loom actually?
+
+👉 It is a concept / initiative that introduces:
+
+✅ Virtual Threads
+✅ Structured Concurrency
+✅ Scoped Values
+
+to improve how Java handles concurrency.
+
+🔷 What is Project Loom (Java 25 view)?
+
+👉 Project Loom is a Java initiative that introduces a new lightweight threading model to simplify
+concurrency and massively improve scalability.
+
+At its core, it brings:
+
+1. Virtual Threads (Main Feature)
+
+(i)   Lightweight threads managed by the JVM (not OS)
+(ii)  You can create thousands to millions of threads
+(iii) Designed for I/O-bound tasks (APIs, DB calls, networking)
+
+👉 Think:
+
+Old Java → Few heavy threads
+Loom → Millions of lightweight threads
+
+🔷 What are Virtual Threads?
+
+A virtual thread is:
+
+-Still a java.lang.Thread
+-But not tied 1:1 to OS threads
+-Runs on top of carrier threads (OS threads) using M:N scheduling
+
+
+⚙️ How it works:
+When a thread is waiting (e.g., DB call):
+
+-JVM pauses (unmounts) it
+-Frees the OS thread
+-Runs another virtual thread
+-When ready → resumes again
+
+👉 This avoids wasting OS threads during blocking operations.
+
+🔷 Why Project Loom is important
+
+🚀 1. Massive scalability
+(i)  Traditional threads → limited (~thousands)
+(ii) Virtual threads → millions possible
+
+🧠 2. Simpler coding model
+
+Before Loom:
+
+You had to use async code (CompletableFuture, reactive programming)
+
+With Loom:
+
+Write normal blocking code
+Still get high scalability
+
+👉 Cleaner, easier, less bugs
+
+💾 3. Low memory usage
+
+(i)  Platform thread → ~1 MB stack
+(ii) Virtual thread → few KB, grows dynamically
+
+🔄 4. No need for thread pools
+
+-Earlier → thread pools required
+-Now → 1 thread per task is fine
+
+🔷 What’s new/improved in Java 25 (Loom context)
+
+By Java 25:
+
+✅ Virtual Threads → Fully stable & optimized
+
+First finalized in Java 21
+
+Java 25 improves:
+
+(i)   Performance
+(ii)  Better handling of synchronized
+(iii) Better observability & tooling
+
+✅ Structured Concurrency (Preview)
+
+Helps manage multiple threads like a single unit
+
+Example: cancel all subtasks if one fails
+
+✅ Scoped Values (Final)
+
+Safer alternative to ThreadLocal
+
+Works better with virtual threads
+
+🔷 Virtual Threads vs Platform Threads
+
+Feature	                         Platform Threads	                             Virtual Threads
+
+Managed by	                     OS	                                             JVM
+Cost	                         Heavy	                                         Lightweight
+Count	                         Thousands	                                     Millions
+Best for	                     CPU-bound tasks	                             I/O-bound tasks
+Blocking	                     Expensive	                                     Cheap
+
+
+🔷 When to use Loom (important for interviews)
+
+✅ Use Virtual Threads for:
+
+a.Web servers (Spring Boot APIs)
+b.Database calls
+c.Microservices
+d.File/network I/O
+
+❌ Avoid for:
+(i)Heavy CPU tasks (ML, encoding, computation)
+(ii)Long-running synchronized blocks
+
+🔷 Simple Example
+
+Thread.startVirtualThread(() -> {
+    System.out.println("Running in virtual thread");
+});
+
+Or executor:
+
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    executor.submit(() -> doWork());
+}
+
+
+🔷 One-line Interview Answer
+
+👉
+Project Loom in Java 25 introduces virtual threads—lightweight, JVM-managed threads that allow writing
+simple blocking code while achieving massive scalability for concurrent applications.
