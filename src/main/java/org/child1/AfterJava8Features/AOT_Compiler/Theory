@@ -78,16 +78,17 @@ Start and stop quickly.
 
 If JVM takes time to:
 
-Start
-Interpret
-JIT compile
+-Start
+-Interpret
+-JIT compile
 
 It wastes time.
 
 So AOT solves:
 
-Slow startup
-JIT CPU overhead
+-Slow startup
+-JIT CPU overhead
+
 🟢 What Happens Internally in AOT?
 
 During build time:
@@ -118,3 +119,4 @@ Needs JVM running	                                  Can run without JVM
 
 AOT means your Java program is converted into real machine code before execution,
 so it starts faster and doesn’t need runtime compilation.
+
