@@ -1,0 +1,63 @@
+🔷 ☕ Java 21 (2023) — Concurrency Revolution (LTS)
+
+🚩 Problem before Java 21
+
+Threads were:
+-Heavy
+-Expensive
+-Needed thread pools
+-Async programming (CompletableFuture) was complex
+
+
+🔑 What Java 21 introduced
+
+1. Virtual Threads (🔥 Core Feature)
+
+Thread.startVirtualThread(() -> {
+    callDatabase();
+});
+
+👉 Deep concept:
+
+-JVM manages threads instead of OS
+-Threads are paused/resumed efficiently
+
+💡 Why it matters
+
+Before:
+
+1000 users → 1000 threads → heavy ❌
+
+Now:
+
+100,000 users → manageable ✅
+
+
+2. Structured Concurrency (Preview)
+
+👉 Treat multiple threads as one unit:
+
+-If one fails → cancel all
+-Easier error handling
+
+3. Scoped Values
+
+👉 Alternative to ThreadLocal
+
+-Safer
+-Works better with virtual threads
+
+4. Pattern Matching (Fully Enhanced)
+
+Even more powerful switch handling
+
+🔄 Improvement over Java 17
+
+👉 Java 17 improved code structure
+👉 Java 21 improved system scalability
+
+✅ Final Impact
+
+👉 Java 21 made:
+a. High-concurrency apps easier
+b. Microservices more scalable
