@@ -1,0 +1,48 @@
+Q. What is BiConsumer?
+
+Ans: Let's start with basic first:-
+
+1️⃣ Consumer (Consumes ONE thing)
+
+🧠 Meaning
+Takes one input, returns nothing
+
+Syntax:
+Consumer<T>
+
+Method:
+void accept(T t);
+
+Example:
+
+Consumer<String> print =
+        s -> System.out.println(s);
+
+print.accept("Hello");
+
+📌 Used when you want to do something, not return something.
+
+2️⃣ BiConsumer (Consumes TWO things)
+
+🧠 Meaning
+Takes two inputs, returns nothing
+
+Syntax:
+BiConsumer<T, U>
+
+Method:
+void accept(T t, U u);
+
+Example:
+BiConsumer<String, Integer> print =
+        (name, age) -> System.out.println(name + " " + age);
+
+print.accept("Tanisha", 23);
+
+3️⃣ Where Consumer / BiConsumer Are Used
+
+(i) Streams:
+list.forEach(e -> System.out.println(e));   // Consumer
+
+(ii) Map:
+map.forEach((k, v) -> System.out.println(k + "=" + v)); // BiConsumer
