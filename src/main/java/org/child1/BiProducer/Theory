@@ -1,0 +1,71 @@
+Q.What is BiProducer?
+
+Ans: Firstly there is no Producer, there is Supplier.
+Secondly there is no BiSupplier of any sort. Let's see the reason:
+
+4️⃣ Producer Side (Supplier) 🏭
+
+Java doesn’t call it “Producer” — it’s called Supplier.
+
+5️⃣ Supplier (Produces ONE thing)
+
+🧠 Meaning
+
+Takes nothing, returns something
+
+Syntax:
+Supplier<T>
+
+Method:
+T get();
+
+Example:
+
+Supplier<Double> random =
+        () -> Math.random();
+
+System.out.println(random.get());
+
+6️⃣ Is There a BiSupplier? ❌
+
+❌ NO BiSupplier in Java
+
+Why?
+
+Supplier already produces without input
+Two outputs don’t make sense as a single return
+
+If needed → wrap in object/record.
+
+7️⃣ Big Picture Table 🧠
+
+Interface	                    Input	             Output	                      Example Use
+
+Consumer	                      1	                  none	                      print, save
+BiConsumer	                      2	                  none	                      map.forEach
+Supplier	                      0	                  1	                          lazy creation
+
+8️⃣ Interview One-Liners ⭐
+
+(i) Consumer:
+“Consumes an input and performs an action without returning a result.”
+
+(ii) BiConsumer:
+“Consumes two inputs and performs an action without returning a result.”
+
+(iii) Supplier:
+“Supplies or produces a value without taking any input.”
+
+9️⃣ Easy Memory Trick 🧠
+
+Consumer  → eats data 🍽️
+Supplier  → gives data 🎁
+Function  → transforms data 🔄
+Predicate → checks data ❓
+
+If you want next:
+
+Function vs BiFunction
+Predicate vs BiPredicate
+Why streams use Consumer in forEach
+Custom Producer / Consumer interfaces
